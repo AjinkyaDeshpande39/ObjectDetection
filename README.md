@@ -36,16 +36,21 @@ I will recommend to connect RPi to your laptop's hotspot so that you can directl
  or sudo apt-get install \<package\>
 
 - Imprt error PIL :
-- - sudo python3 -m pip install wheel
-- - sudo python3 -m pip install pandas
-
+```
+sudo python3 -m pip install wheel
+sudo python3 -m pip install pandas
+```
 - workon cv : Import error PIL
-- - sudo apt-get install python-pillow
-- - (or) sudo pip3 install pillow.
+```
+sudo apt-get install python-pillow
+(or) 
+sudo pip3 install pillow.
+```
 - Installing pandas:
-- - sudo python3 -m pip install wheel
-- - sudo python3 -m pip install pandas
-
+```
+sudo python3 -m pip install wheel
+sudo python3 -m pip install pandas
+```
 - VNC viewer cant show desktop image: change video resolution.
 ## Intregration of Web-Cam 📹
 
@@ -54,7 +59,7 @@ I will recommend to connect RPi to your laptop's hotspot so that you can directl
 - The RPi is linked to the mobile phone using wifi-hostpot, so they both have a local address. 
 - We are now receiving the footage from the mobile camera at the R-pi's local address.
 - This video was fetched in Python with the help of the url and cv2 library.
-By this method, you can connect high resolution mobile camera. But since it is LAN connection, fetching frame is slow and laggs.  
+By this method, you can connect high resolution mobile camera. But since it is LAN connection, fetching frame(fps) is slow and laggs.  
 
 ## Model
 clone this repo https://github.com/DoubangoTelecom/ultimateALPR-SDK. Download it in RPi.
@@ -64,6 +69,25 @@ This repo is large. 2GB. make sure you have uninterrupted internet thoughout pro
 
 After downloading complete, follow the instructions about setting up benchmark, building apk, building python extension, installing tensorflow.
 All the instructions are given in README.md files. If you read the repo line by line, you could do it by yourself. The most common issues you could face during this process are also given at bottom. 
+
+Some key points ill mention here -
+- DoubangoTelecom claims that at max it works with 12fps on RPi. This sdk is open source and doent require licence
+- This is a command line application. A sample file is given in samples/python/recognizer folder.
+- Before running this file, you have to make sure some dependencies are installed
+- The SDK is developed in C++11 and you'll need glibc 2.27+ on Linux and Visual C++ Redistributable for Visual Studio 2015 (any later version is ok) on Windows. You most likely already have these dependencies on you machine as almost every program require it.
+- I didnt use OpenVINO. It accelerates the process by a large amount. Although OpenvVINO is for windows, it can be used in raspbian/debian os using Intel's NeuralComputeStick. It is basically a VPU.
+- To check missing dependencies : Linux x86_64: Use ldd <your-shared-lib> on binaries/linux/x86_64/libultimate_alpr-sdk.so 
+- You must build python extension : https://github.com/DoubangoTelecom/ultimateALPR-SDK/blob/master/python/README.md clearly instructed here.
+- install libtensorflow.so https://github.com/DoubangoTelecom/ultimateALPR-SDK/blob/master/samples/c++/README.md#gpu-acceleration-tensorflow-linux. SDK uses tensorflow acceleration for fast computing.
+ - Before trying to run sample file, you have to move to cd ultimateALPR-SDK/binaries/raspbian/armv7l
+ - then try - 
+```
+ PYTHONPATH=$PYTHONPATH:.:../../../python \
+LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH \
+python ../../../samples/python/recognizer/recognizer.py --image ../../../assets/images/lic_us_1280x720.jpg --assets ../../../assets
+```
+ 
+ You can meke changes to this file but run the recognizer from binaries folder only.
 
 
 
