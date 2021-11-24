@@ -10,7 +10,7 @@ OpenVINO enhances speed of processing, detection hence improves model's performa
 # Table of contents
 - [RaspberryPi setup](#raspberrypi-setup)
 - [Intregration of Web-Cam](#intregration-of-web-cam)
-- 
+- [Model](#model)
 
 ## RaspberryPi setup 💻
 The model which i am using is RaspberryPi 4B it has 4GB RAM.
@@ -47,7 +47,7 @@ I will recommend to connect RPi to your laptop's hotspot so that you can directl
 - - sudo python3 -m pip install pandas
 
 - VNC viewer cant show desktop image: change video resolution.
-## Intregration of Web-Cam
+## Intregration of Web-Cam 📹
 
 - Here, I used IPWebcam to connect the web cam to the RPi. 
 - The feed of the mobile camera is hosted on a local IP address using [IP Webcam](https://play.google.com/store/apps/details?id=com.pas.webcam&hl=en_IN&gl=US)
@@ -55,3 +55,15 @@ I will recommend to connect RPi to your laptop's hotspot so that you can directl
 - We are now receiving the footage from the mobile camera at the R-pi's local address.
 - This video was fetched in Python with the help of the url and cv2 library.
 By this method, you can connect high resolution mobile camera. But since it is LAN connection, fetching frame is slow and laggs.  
+
+## Model
+clone this repo https://github.com/DoubangoTelecom/ultimateALPR-SDK. Download it in RPi.
+
+You can follow this blog to learn how to clone repo https://geektechstuff.com/2019/09/09/introduction-to-github-raspberry-pi/
+This repo is large. 2GB. make sure you have uninterrupted internet thoughout process.
+
+After downloading complete, follow the instructions about setting up benchmark, building apk, building python extension, installing tensorflow.
+All the instructions are given in README.md files. If you read the repo line by line, you could do it by yourself. The most common issues you could face during this process are also given at bottom. 
+
+
+
