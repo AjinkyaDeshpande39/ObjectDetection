@@ -60,6 +60,8 @@ sudo python3 -m pip install pandas
 - We are now receiving the footage from the mobile camera at the R-pi's local address.
 - This video was fetched in Python with the help of the url and cv2 library.
 By this method, you can connect high resolution mobile camera. But since it is LAN connection, fetching frame(fps) is slow and laggs.  
+![](https://github.com/AjinkyaDeshpande39/ObjectDetection/blob/main/Images/Hnet-image.gif)
+
 
 ## Model
 clone this repo https://github.com/DoubangoTelecom/ultimateALPR-SDK. Download it in RPi.
