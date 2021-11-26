@@ -1,4 +1,4 @@
-<!-- 
+
 # 🚗 Vehicle detection, Tracking, Number plate recognition, Speed calculation all on RaspberryPi B4 model. 🍓
 
 In this project, we used model developed by https://github.com/DoubangoTelecom/ultimateALPR-SDK
@@ -7,13 +7,15 @@ OpenVINO enhances speed of processing, detection hence improves model's performa
 
 
 
-# Table of contents
+# Table of contents 📑
 - [RaspberryPi setup](#raspberrypi-setup)
 - [Intregration of Web-Cam](#intregration-of-web-cam)
 - [Model](#model)
 - [Results](#results)
 - [Detection](#detection)
 - [In-out counting](#in-out-counting)
+- [Tracking and speed calculation](#tracking-and-speed-calculation)
+- [Issues](#issues)
 
 ## RaspberryPi setup 💻
 The model which i am using is RaspberryPi 4B it has 4GB RAM.
@@ -66,7 +68,7 @@ By this method, you can connect high resolution mobile camera. But since it is L
 ![](https://github.com/AjinkyaDeshpande39/ObjectDetection/blob/main/Images/Hnet-image.gif)
 
 
-## Model
+## Model 
 clone this repo https://github.com/DoubangoTelecom/ultimateALPR-SDK. Download it in RPi.
 
 You can follow this blog to learn how to clone repo https://geektechstuff.com/2019/09/09/introduction-to-github-raspberry-pi/
@@ -92,11 +94,13 @@ LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH \
 python ../../../samples/python/recognizer/recognizer.py --image ../../../assets/images/lic_us_1280x720.jpg --assets ../../../assets
 ```
  
- My code - https://github.com/AjinkyaDeshpande39/ObjectDetection/blob/main/recognizer2.py
+ My code https://github.com/AjinkyaDeshpande39/ObjectDetection/blob/main/recognizer2.py
  
  You can meke changes to this file but run the recognizer from binaries directory only.
 
- ## Results
+ #Init and deinit only once cause it is time consuming and meaningless to repeat.
+
+ ## Results 😃
  ![](https://github.com/AjinkyaDeshpande39/ObjectDetection/blob/main/Images/frame.jpg)
  After detection and processing
  ![](https://github.com/AjinkyaDeshpande39/ObjectDetection/blob/main/Images/frame2.jpg)
@@ -113,7 +117,8 @@ python ../../../samples/python/recognizer/recognizer.py --image ../../../assets/
  
  The details of code, methods, analysis, and techniques will be mentioned in next section.
 
-## Detection
+## Detection 🕵️
+ 
  The piece of code 
  ```
  warpedBox,texts_lst = checkResult("Process",
@@ -127,11 +132,14 @@ python ../../../samples/python/recognizer/recognizer.py --image ../../../assets/
                     )
         )
     return(warpedBox,texts_lst)
- ``` -->
+ ```
  Calls pretrained model which is basically a version of YOLO. Runs our frame through that NN and generated some results. Results contain -
  <br> warpedBoxes(bounding boxes) - 
  ```
- {"duration":446,"frame":128,"plates":[{"car":{"confidence":66.40625,"warpedBox":[240.1518,331.3265,359.7488,331.3265,359.7488,418.2095,240.1518,418.2095]},"confidences":[44.8803,99.60938,87.08838,85.15766,92.15341,87.9593,55.63031,44.88803],"text":"NMMA3*","warpedBox":[271.8652,373.9273,334.6915,373.9273,334.6915,400.7947,271.8652,400.7947]}]}
+ {"duration":446,"frame":128,"plates":[{"car":
+ {"confidence":66.40625,"warpedBox":[240.1518,331.3265,359.7488,331.3265,359.7488,418.2095,240.1518,418.2095]},
+ "confidences":[44.8803,99.60938,87.08838,85.15766,92.15341,87.9593,55.63031,44.88803],"text":"NMMA3*",
+ "warpedBox":[271.8652,373.9273,334.6915,373.9273,334.6915,400.7947,271.8652,400.7947]}]}
  ```
  Here structure is as follows - 
  - warpedBox: duration, frame, plates
@@ -141,7 +149,7 @@ python ../../../samples/python/recognizer/recognizer.py --image ../../../assets/
 
 So, basically a car will be detected only if plate is readable. No plate, no car. Using text as key, car object will be created with these atributes and appended in 'detectedCars' and 'currFrameCars' dictionaries. Usage of these is mentioned in next sectoin.
 
-## In-out counting
+## In-out counting 👁️‍🗨️
 When a car is detected, we create 'car' object for it. At the time of object creation only, we modify the total count of incoming and outgoing count. 
 If the centre of car i.e. center o fbounding box is within the red strip specified by us, then count is modified.If centre is in the left half then increment out count. Else, increment in-count. This strip is placed where there is high chance of detecting car. Top left corner is origin (0,0). 
 <p align="center">
@@ -149,5 +157,30 @@ If the centre of car i.e. center o fbounding box is within the red strip specifi
 </p>
 Bounding box in the results contain [x1,y1,x2,y2,x3,y3,x4,y4]. Another way could be modify count if bounding box contains line. But reason why i didnt follow this approach is- the number of chances of count modification increases. This is not good. It will become more clear later.
 
-## Tracking, speed calculation
-The main issue i faced is -
+## Tracking, speed calculation 🖲️
+The main issue i faced is due to model imperfection or low resolution of image. Suppose one car gets detected with perticular plate "xyz". In next frame, same car gets detected with another plate "xyzw". Regardless of difference in plate number, code will consider it as new entry and calculate speed and count for it. To encounter this pblm, I am keeping track of cars from last frame.\
+    Here, IOU intersection over union concept is applied.
+    <p align="center">
+  <img width="200" src="https://github.com/AjinkyaDeshpande39/ObjectDetection/blob/main/Images/iou.png">
+</p>
+ <ul> We run a loop for current captured image on lastFrameCars dict. We calculate IOU of bounding boxes of two cars. If IOU is grater than reference value(usually kept greater than 0.5), that means this is the same car. In such case, we just update the attributes and update speed. Else, it means that this is really a different car. So, make new entry. </ul> 
+
+
+### But how to know which number plate was correct one ? 🤔
+
+ In the results, we obtain confidence score for number plates. We will update the number plate based on this we can update the number plate.
+ 
+ This is how tracking of car is done in simple manner.
+    
+ 
+ Since i didnt know the actual ground measurements, i am considering 
+ 
+ *speed  =  (change in y co-ordinate)/(frames passed)*
+ 
+ If we have actual measurements, we can convert this further to real dimensions. Speed is updated for every next appearance of that car.
+
+## Issues ⁉️
+- The processing time for this model is very large. I was getting near to 1fps video output at 1280x720fps on RPi4B
+- The bounding boxes are varying for every frame per car. This generates some illusion while watching the video.
+- Small number plates are removed. (dont know why)
+ 
