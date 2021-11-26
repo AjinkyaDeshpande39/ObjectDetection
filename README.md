@@ -143,6 +143,11 @@ So, basically a car will be detected only if plate is readable. No plate, no car
 
 ## In-out counting
 When a car is detected, we create 'car' object for it. At the time of object creation only, we modify the total count of incoming and outgoing count. 
-If the centre of car i.e. center o fbounding box is within the red strip specified by us, then count is modified.If centre is in the left half then increment out count. Else, increment in-count. This strip is placed where there is high chance of detecting car. Top left corner is origin (0,0). Bounding box in the results contain [x1,y1,x2,y2,x3,y3,x4,y4]. Another way could be modify count if bounding box contains line. But reason why i didnt follow this approach is- the number of chances of count modification increases. This is not good. It will become more clear later.
+If the centre of car i.e. center o fbounding box is within the red strip specified by us, then count is modified.If centre is in the left half then increment out count. Else, increment in-count. This strip is placed where there is high chance of detecting car. Top left corner is origin (0,0). 
+<p align="center">
+  <img width="200" src="https://github.com/AjinkyaDeshpande39/ObjectDetection/blob/main/Images/bb.png">
+</p>
+Bounding box in the results contain [x1,y1,x2,y2,x3,y3,x4,y4]. Another way could be modify count if bounding box contains line. But reason why i didnt follow this approach is- the number of chances of count modification increases. This is not good. It will become more clear later.
 
 ## Tracking, speed calculation
+The main issue i faced is -
