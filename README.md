@@ -1,4 +1,4 @@
-
+<!-- 
 # 🚗 Vehicle detection, Tracking, Number plate recognition, Speed calculation all on RaspberryPi B4 model. 🍓
 
 In this project, we used model developed by https://github.com/DoubangoTelecom/ultimateALPR-SDK
@@ -11,6 +11,9 @@ OpenVINO enhances speed of processing, detection hence improves model's performa
 - [RaspberryPi setup](#raspberrypi-setup)
 - [Intregration of Web-Cam](#intregration-of-web-cam)
 - [Model](#model)
+- [Results](#results)
+- [Detection](#detection)
+- [In-out counting](#in-out-counting)
 
 ## RaspberryPi setup 💻
 The model which i am using is RaspberryPi 4B it has 4GB RAM.
@@ -89,7 +92,57 @@ LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH \
 python ../../../samples/python/recognizer/recognizer.py --image ../../../assets/images/lic_us_1280x720.jpg --assets ../../../assets
 ```
  
- You can meke changes to this file but run the recognizer from binaries folder only.
+ My code - https://github.com/AjinkyaDeshpande39/ObjectDetection/blob/main/recognizer2.py
+ 
+ You can meke changes to this file but run the recognizer from binaries directory only.
 
+ ## Results
+ ![](https://github.com/AjinkyaDeshpande39/ObjectDetection/blob/main/Images/frame.jpg)
+ After detection and processing
+ ![](https://github.com/AjinkyaDeshpande39/ObjectDetection/blob/main/Images/frame2.jpg)
 
+ Detailed video can be viewed here - https://youtu.be/Ok_Z6FTORyo
+ 
+ In the images you can see nunmber has been detected and displayed.
+ 
+ Bounding boxes of plate as well as car are displayed
+ 
+ Speed of car at that instance is also mentioned just above the bounding box
+ 
+ count of incoming and outgoing cars is displayed at top left corner
+ 
+ The details of code, methods, analysis, and techniques will be mentioned in next section.
 
+## Detection
+ The piece of code 
+ ```
+ warpedBox,texts_lst = checkResult("Process",
+                ultimateAlprSdk.UltAlprSdkEngine_process(
+                    format,
+                    image.tobytes(), # type(x) == bytes
+                    width,
+                    height,
+                    0, # stride
+                    exifOrientation
+                    )
+        )
+    return(warpedBox,texts_lst)
+ ``` -->
+ Calls pretrained model which is basically a version of YOLO. Runs our frame through that NN and generated some results. Results contain -
+ <br> warpedBoxes(bounding boxes) - 
+ ```
+ {"duration":446,"frame":128,"plates":[{"car":{"confidence":66.40625,"warpedBox":[240.1518,331.3265,359.7488,331.3265,359.7488,418.2095,240.1518,418.2095]},"confidences":[44.8803,99.60938,87.08838,85.15766,92.15341,87.9593,55.63031,44.88803],"text":"NMMA3*","warpedBox":[271.8652,373.9273,334.6915,373.9273,334.6915,400.7947,271.8652,400.7947]}]}
+ ```
+ Here structure is as follows - 
+ - warpedBox: duration, frame, plates
+   - dictionaries related to car info of that plate
+     - confidence, warpedBox of car, confidence
+   - text over that plate, warpedBox of plate
+
+So, basically a car will be detected only if plate is readable. No plate, no car. Using text as key, car object will be created with these atributes and appended in 'detectedCars' and 'currFrameCars' dictionaries. Usage of these is mentioned in next sectoin.
+
+## In-out counting
+When a car is detected, we create 'car' object for it. At the time of object creation only, we modify the total count of incoming and outgoing count. 
+If the centre of car i.e. center o fbounding box is within the red strip specified by us, then count is modified.If centre is in the left half then increment out count. Else, increment in-count. This strip is placed where there is high chance of detecting car. Top left corner is origin (0,0). Bounding box in the results contain [x1,y1,x2,y2,x3,y3,x4,y4]. Another way could be modify count if bounding box contains line. But reason why i didnt follow this approach is- the number of chances of count modification increases. This is not good. It will become more clear later.
+
+## Tracking, speed calculation
