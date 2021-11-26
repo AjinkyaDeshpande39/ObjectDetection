@@ -11,6 +11,8 @@ OpenVINO enhances speed of processing, detection hence improves model's performa
 - [RaspberryPi setup](#raspberrypi-setup)
 - [Intregration of Web-Cam](#intregration-of-web-cam)
 - [Model](#model)
+- [Results](#results)
+- [Detection](#detection)
 
 ## RaspberryPi setup 💻
 The model which i am using is RaspberryPi 4B it has 4GB RAM.
@@ -89,7 +91,41 @@ LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH \
 python ../../../samples/python/recognizer/recognizer.py --image ../../../assets/images/lic_us_1280x720.jpg --assets ../../../assets
 ```
  
- You can meke changes to this file but run the recognizer from binaries folder only.
+ My code - https://github.com/AjinkyaDeshpande39/ObjectDetection/blob/main/recognizer2.py
+ 
+ You can meke changes to this file but run the recognizer from binaries directory only.
 
+ ## Results
+ ![](https://github.com/AjinkyaDeshpande39/ObjectDetection/blob/main/Images/frame.jpg)
+ After detection and processing
+ ![](https://github.com/AjinkyaDeshpande39/ObjectDetection/blob/main/Images/frame2.jpg)
 
+ Detailed video can be viewed here - https://youtu.be/Ok_Z6FTORyo
+ 
+ In the images you can see nunmber has been detected and displayed.
+ 
+ Bounding boxes of plate as well as car are displayed
+ 
+ Speed of car at that instance is also mentioned just above the bounding box
+ 
+ count of incoming and outgoing cars is displayed at top left corner
+ 
+ The details of code, methods, analysis, and techniques will be mentioned in next section.
 
+## Detection
+ The piece of code 
+ ```
+ warpedBox,texts_lst = checkResult("Process",
+                ultimateAlprSdk.UltAlprSdkEngine_process(
+                    format,
+                    image.tobytes(), # type(x) == bytes
+                    width,
+                    height,
+                    0, # stride
+                    exifOrientation
+                    )
+        )
+    return(warpedBox,texts_lst)
+ ```
+ Calls pretrained model which is basically a version of YOLO. Runs our frame through that NN and generated some results. Results contain -
+ <br> warpedBoxes(bounding boxes) of plates, their confidance score and 
