@@ -64,26 +64,31 @@ JSON_CONFIG = {
     "recogn_score_type": "min"
 }
 
-TAG = "[PythonRecognizer] "
+# These are the strips on which if vehicle comes, gets counted
 checkBoxout = (0.554,0.60)
 checkBoxin = (0.36,0.41)
-video_address = "traffic_london.mp4"
 
+video_address = "traffic_london.mp4"
 video = cv2.VideoCapture(video_address)
-savedVideo = None
+savedVideo = None  # This will be video created after processing the frames.
+
 address = "https://192.168.43.1:8080/video"
+# #If you want to capture images from webcam, uncoment this
 #video.open(address)
-#exif = 0
-#exifOrientation = 0
+
+# Some initializations
 count = 0
 format = ultimateAlprSdk.ULTALPR_SDK_IMAGE_TYPE_RGB24
 
+# detectedCars stores objects of all cars detected till now. lastFrameCars and currFrameCars store cars detected in last and current frame resp.
+# These get updated time to time.
 detectedCars = {}
 lastFrameCars = {}
 currFrameCars = {}
 imageSize = (720,1280,3)
 
-
+# Object of this class are detected cars only. Car has id, plate-coordinates, car-coordinates, speed, frame-number atributes.
+# speed of car will be updated frame by frame. In count and out count will be set only once.
 class Cars():
     id = 1
     imageSize = (None,None)
@@ -112,7 +117,8 @@ class Cars():
         return(self.carOrdinates)
     def getPlateOrdinates(self):
         return(self.plateOrdinates)
-            
+    # When car is detected, corresponding object will be created. Speed is not set at that time. Speed will be set from next frame.
+    # Here i am defining speed as change in y co-ordinate per frame. processing this further with actual measurements could give us actual speed.
     def setSpeed(self,i,frameNo):
         newCarOrdinates = i['car']['warpedBox']
         v1 = (self.carOrdinates[1]+self.carOrdinates[7])/2
@@ -121,7 +127,7 @@ class Cars():
         speed = abs((v1-v2)/t)
         if speed!=0 or speed<1e6:
             self.speed = speed
-        
+    # setting count. If car is found in left half, and is in the detection strip, then update outgoing count. Accordingly for incoming cars.
     def setCount(self,i=None):
         if self.countSet:
             return
@@ -143,6 +149,8 @@ class Cars():
                 Cars.outgoingCount += 1
                 self.countSet = True
 
+# Intersection over Union of two bounding boxes.
+# Required while tracking the same car.
 def IOU(boxA, boxB):
     # determine the (x, y)-coordinates of the intersection rectangle
     xA = max(boxA[0], boxB[0])
@@ -162,12 +170,15 @@ def IOU(boxA, boxB):
     # return the intersection over union value
     return iou
 
-
+# Operate function takes bounding boxes, text, frame number detected of a car, and creates new car object or updates earlier one.
+# It also sets incoming, outgoing count and speed of car too.
 def operate(i,frameNo):
     global detectedCars
     global lastFrameCars
     global currFrameCars
     text = i["text"]
+    # It might happen that model detects same car but with different number case in next frame. That care is taken here.
+    # If this text is already detected, then just update that prev. entry.
     if text in detectedCars:
         c1 = detectedCars[text]
         c1.setSpeed(i,frameNo)
@@ -179,7 +190,7 @@ def operate(i,frameNo):
         detectedCars[text] = c1
         currFrameCars[text] = c1
         
-            
+    # else, check if this car has IOU>0.58 with any other prev. detected cars(in last frame only). If yes, it means this is same car. else, create new entry.
     else:
         flag = False
         carOrdinates = i['car']['warpedBox']
@@ -205,7 +216,8 @@ def operate(i,frameNo):
             c1 = Cars(i,frameNo)
             detectedCars[text] = c1
             currFrameCars[text] = c1
-        
+
+# Returns texts and bounding boxes of cars in current frame added after detection and processing
 def getTW():
     global currFrameCars
     texts_lst =  []
@@ -218,7 +230,7 @@ def getTW():
     
     
     
-# Check result
+# Check result. Helper function
 def checkResult(operation, result):
     warpedBoxes = []
     texts_lst = []
@@ -238,7 +250,7 @@ def checkResult(operation, result):
                     # i['wrappedBox] is number plate. i['car']['wrappedBox'] is car
     return(warpedBoxes, texts_lst)
 
-
+# Main predict function that runs the model for given frame and calls other helper functions for processing and data updating.
 def predict(args,frame):
 
     # Check if image exist
@@ -296,7 +308,7 @@ def predict(args,frame):
         )
     return(warpedBox,texts_lst)
     
-    
+# Run initially only. To check the FPS of input video. At the same  time, it does some initializations too. So make sure you take care of them if dont want to checkFPS
 def checkFPS():
     global video
     global checkBoxout
@@ -321,7 +333,7 @@ def checkFPS():
     print("Cars.checkBoxout:",Cars.checkBoxout,"Cars.checkBoxin:",Cars.checkBoxin," imageSize:",imageSize," Cars.imageSize:",Cars.imageSize)
     return(fps)
 
-
+# Return VideoWritter object
 def videoWritterSetup():
     global savedVideo
     frame_width = int(video.get(3))
@@ -332,7 +344,7 @@ def videoWritterSetup():
     savedVideo = cv2.VideoWriter("capuredVideo.mp4",cv2.VideoWriter_fourcc('m','p','4','v'),fps,size)
     return(savedVideo, fps)
 
-
+# Displays processed image
 def displayInCv2(warpedBox, texts, frame):
     # CV2 supprot rgb colour code in rectangle function.
     global imageSize
@@ -424,8 +436,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     image = Image.open(args.image)
-    #exif = image._getexif()
-    #exifOrientation = exif[ORIENTATION_TAG[0]] if len(ORIENTATION_TAG) == 1 and exif != None else 1
     savedVideo, fps = videoWritterSetup()
     try:
         for i in range(fps*12):
