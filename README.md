@@ -184,3 +184,9 @@ The main issue i faced is due to model imperfection or low resolution of image. 
 - The bounding boxes are varying for every frame per car. This generates some illusion while watching the video.
 - Small number plates are removed. (dont know why)
  
+ 
+ 
+ __________________________________________________
+ Here is another test on Indian number plates. 😄
+ ![](https://github.com/AjinkyaDeshpande39/ObjectDetection/blob/main/Images/indiannumberplate.png)
+ https://youtu.be/fqN0igOwuSI
