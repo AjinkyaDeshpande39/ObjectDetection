@@ -190,3 +190,5 @@ The main issue i faced is due to model imperfection or low resolution of image. 
  Here is another test on Indian number plates. 😄
  ![](https://github.com/AjinkyaDeshpande39/ObjectDetection/blob/main/Images/indiannumberplate.png)
  https://youtu.be/fqN0igOwuSI
+ 
+ I have shot this video from 12MP mobile camera. Check recognizer2v2.py which is just extension of recognizer2.py with some more code for adding background and font change etc.
