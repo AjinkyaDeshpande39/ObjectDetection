@@ -13,7 +13,7 @@ OpenVINO enhances speed of processing, detection hence improves model's performa
 - [Model](#model)
 - [Results](#results)
 - [Detection](#detection)
-- [In-out counting](#in-out-counting)
+- [In out counting](#in-out-counting)
 - [Tracking and speed calculation](#tracking-and-speed-calculation)
 - [Comparison between linux and raspberrypi performance](#comparison-between-linux-raspberrypi)
 - [Issues](#issues)
@@ -169,7 +169,7 @@ So, basically a car will be detected only if plate is readable. No plate, no car
 
  _________________________________
  
-<a name="in-out-conting"></a>
+<a name="in-out-counting"></a>
 ## In-out counting 👁️‍🗨️
 When a car is detected, we create 'car' object for it. At the time of object creation only, we modify the total count of incoming and outgoing count. 
 If the centre of car i.e. center o fbounding box is within the red strip specified by us, then count is modified.If centre is in the left half then increment out count. Else, increment in-count. This strip is placed where there is high chance of detecting car. Top left corner is origin (0,0). 
@@ -206,7 +206,7 @@ The main issue i faced is due to model imperfection or low resolution of image. 
  _____________________________________________
  
 <a name="comparison-between-linux-raspberrypi"></a>
-## Comparison bertwwen linux and raspberrypi performance
+## Comparison between linux and raspberrypi performance
  
  Linux specification - 4GB RAM, hexa core, no GPU
  
