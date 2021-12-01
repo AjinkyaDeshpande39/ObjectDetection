@@ -212,11 +212,12 @@ The main issue i faced is due to model imperfection or low resolution of image. 
  
  Raspberrypi specs - 4GB RAM, quad core, no GPU
  
+ Comparison is done w.r.t FPS
  |**Resolution**|**Linux**|**Raspbian**|
  |---|---|---|
-|1920x1080 | 0.85 |  0.84  |
-|1280x720  | 1.98 |  1.1024 |
-|640x480   |  4.8 |  1.9 |
+|1920x1080 | 0.85fps |  0.84fps  |
+|1280x720  | 1.98fps |  1.1024fps |
+|640x480   |  4.8fps |  1.9fps |
 
  I observed that for low resolution, Linux and Rasperrypi make difference.
  
