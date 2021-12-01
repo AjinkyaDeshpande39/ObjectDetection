@@ -18,7 +18,7 @@ OpenVINO enhances speed of processing, detection hence improves model's performa
 - [Comparison between linux and raspberrypi performance](#comparison-between-linux-raspberrypi)
 - [Issues](#issues)
 
-
+<a name="raspberrypi-setup"></a>
 ## RaspberryPi setup 💻
 The model which i am using is RaspberryPi 4B it has 4GB RAM.
 If you are new to raspberryPi and have not even flashed OS, or RPi is ready but packages are not installed, do follow this blog -: https://www.pyimagesearch.com/2019/09/16/install-opencv-4-on-raspberry-pi-4-and-raspbian-buster/
@@ -62,7 +62,7 @@ sudo python3 -m pip install pandas
 
 
 __________________________________________
-
+<a name="intregration-of-web-cam"></a>
 ## Intregration of Web-Cam 📹
 
 - Here, I used IPWebcam to connect the web cam to the RPi. 
@@ -74,7 +74,7 @@ By this method, you can connect high resolution mobile camera. But since it is L
 ![](https://github.com/AjinkyaDeshpande39/ObjectDetection/blob/main/Images/Hnet-image.gif)
 
 __________________________________
-
+<a name="model"></a>
 ## Model 
 clone this repo https://github.com/DoubangoTelecom/ultimateALPR-SDK. Download it in RPi.
 
@@ -94,7 +94,7 @@ Some key points ill mention here -
 - You must build python extension : https://github.com/DoubangoTelecom/ultimateALPR-SDK/blob/master/python/README.md clearly instructed here.
 - install libtensorflow.so https://github.com/DoubangoTelecom/ultimateALPR-SDK/blob/master/samples/c++/README.md#gpu-acceleration-tensorflow-linux. SDK uses tensorflow acceleration for fast computing.
  - Before trying to run sample file, you have to move to cd ultimateALPR-SDK/binaries/raspbian/armv7l
- - then try - 
+ - then try
 ```
  PYTHONPATH=$PYTHONPATH:.:../../../python \
 LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH \
@@ -103,11 +103,11 @@ python ../../../samples/python/recognizer/recognizer.py --image ../../../assets/
  
  My code https://github.com/AjinkyaDeshpande39/ObjectDetection/blob/main/recognizer2.py
  
- You can meke changes to this file but run the recognizer from binaries directory only.
+ You can make changes to this file but run the recognizer from binaries directory only.
 
  #Init and deinit only once cause it is time consuming and meaningless to repeat.
 ___________________________________
- 
+ <a name="results"></a>
  ## Results 😃
  ![](https://github.com/AjinkyaDeshpande39/ObjectDetection/blob/main/Images/frame.jpg)
  After detection and processing
@@ -130,11 +130,11 @@ ___________________________________
  ![](https://github.com/AjinkyaDeshpande39/ObjectDetection/blob/main/Images/indiannumberplate.png)
  https://youtu.be/fqN0igOwuSI
  
- I have shot this video from 12MP mobile camera. Check recognizer2v2.py which is just extension of recognizer2.py with some more code for adding background and font change etc.
+ I have shot this video from 12MP mobile camera resolution 1920x1080. Check recognizer2v2.py which is just extension of recognizer2.py with some more code for adding background and font change etc.
 
  ________________________________________
  
- 
+<a name="detection"></a>
 ## Detection 🕵️
  
  The piece of code 
@@ -167,8 +167,9 @@ ___________________________________
 
 So, basically a car will be detected only if plate is readable. No plate, no car. Using text as key, car object will be created with these atributes and appended in 'detectedCars' and 'currFrameCars' dictionaries. Usage of these is mentioned in next sectoin.
 
- _____________________________________
+ _________________________________
  
+<a name="in-out-conting"></a>
 ## In-out counting 👁️‍🗨️
 When a car is detected, we create 'car' object for it. At the time of object creation only, we modify the total count of incoming and outgoing count. 
 If the centre of car i.e. center o fbounding box is within the red strip specified by us, then count is modified.If centre is in the left half then increment out count. Else, increment in-count. This strip is placed where there is high chance of detecting car. Top left corner is origin (0,0). 
@@ -179,6 +180,7 @@ Bounding box in the results contain [x1,y1,x2,y2,x3,y3,x4,y4]. Another way could
 
  _________________________________
  
+<a name="tracking-and-speed-calculation"></a>
 ## Tracking, speed calculation 🖲️
 The main issue i faced is due to model imperfection or low resolution of image. Suppose one car gets detected with perticular plate "xyz". In next frame, same car gets detected with another plate "xyzw". Regardless of difference in plate number, code will consider it as new entry and calculate speed and count for it. To encounter this pblm, I am keeping track of cars from last frame.\
     Here, IOU intersection over union concept is applied.
@@ -203,6 +205,7 @@ The main issue i faced is due to model imperfection or low resolution of image. 
 
  _____________________________________________
  
+<a name="comparison-between-linux-raspberrypi"></a>
 ## Comparison bertwwen linux and raspberrypi performance
  
  Linux specification - 4GB RAM, hexa core, no GPU
@@ -225,7 +228,7 @@ The main issue i faced is due to model imperfection or low resolution of image. 
 
 ____________________________________________
  
- 
+<a name="issues"></a>
 ## Issues ⁉️
 - The processing time for this model is very large. I was getting near to 1fps video output at 1280x720fps on RPi4B
 - The bounding boxes are varying for every frame per car. This generates some illusion while watching the video.
