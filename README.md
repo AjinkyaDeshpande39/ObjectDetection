@@ -96,7 +96,7 @@ Some key points ill mention here -
  - Before trying to run sample file, you have to move to cd ultimateALPR-SDK/binaries/raspbian/armv7l
  - then try
 ```
- PYTHONPATH=$PYTHONPATH:.:../../../python \
+PYTHONPATH=$PYTHONPATH:.:../../../python \
 LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH \
 python ../../../samples/python/recognizer/recognizer.py --image ../../../assets/images/lic_us_1280x720.jpg --assets ../../../assets
 ```
